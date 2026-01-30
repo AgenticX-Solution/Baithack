@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baithack - Taste of Kulhad | Pimpri Menu</title>
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --header-top: #0F172A;
+            --header-bottom: #1a1a1a;
+            --accent: #ff8c00;
+            --text: #ffffff;
+            --dim-text: #b3b3b3;
+            --card: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        header {
+            text-align: center;
+            padding: 24px 12px;
+            background: linear-gradient(var(--header-top), var(--header-bottom));
+            border-bottom: 2px solid var(--accent);
+        }
+
+        /* .logo h1 { font-size: 3rem; color: var(--accent); margin: 0; text-transform: uppercase; } */
+        .logo-img { width: 250px; max-width: 50%; height: auto; display: block; margin: 0 auto 2px; }
+        /* .kulhad-img { width: 80px; max-width: 30%; height: auto; display: block; margin: 8px auto 0; } */
+        .tagline { letter-spacing: 2px; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+
+        #search-box {
+            width: 80%;
+            max-width: 400px;
+            padding: 12px;
+            border-radius: 25px;
+            border: 1px solid var(--accent);
+            background: transparent;
+            color: white;
+            margin: 20px auto;
+            display: block;
+            outline: none;
+        }
+
+        .filter-nav {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px;
+            gap: 10px;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        .filter-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--accent);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.3s;
+        }
+
+        .filter-btn.active { background: var(--accent); color: #000; font-weight: bold; }
+
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+        .category-section { margin-bottom: 30px; }
+        .section-title {
+            color: var(--accent);
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+            margin-top: 40px;
+            padding-bottom: 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price { color: var(--accent); font-weight: bold; }
+        .price-header { font-size: 0.8rem; color: var(--dim-text); text-transform: uppercase; }
+        .extra-note { font-style: italic; color: var(--dim-text); font-size: 0.9rem; margin-top: 10px; }
+
+        footer { text-align: center; padding: 40px; background: #111; color: var(--dim-text); font-size: 0.9rem; border-top: 1px solid #333; }
+        .quality-quote { color: #ffeb3b; font-style: italic; margin-bottom: 20px; display: block; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="assets/baithack.png" alt="Baithack logo" class="logo-img" />
+            <p class="tagline">TASTE OF KULHAD</p>
+            <!-- <img src="assets/kulhad.png" alt="Kulhad cup" class="kulhad-img" /> -->
+        </div>
+        <p>📍 Shop No. 11, Rajveer Impair, Pimpri, Pune</p>
+        <p>📞 +91 88550 82930 | 🕗 8AM - 11PM</p>
+    </header>
+
+    <input type="text" id="search-box" placeholder="Search for your favorite dish..." />
+
+    <nav class="filter-nav">
+        <button class="filter-btn active" data-cat="all">All</button>
+        <button class="filter-btn" data-cat="new">New Arrivals</button>
+        <button class="filter-btn" data-cat="chai">Chai & Coffee</button>
+        <button class="filter-btn" data-cat="snacks">Snacks</button>
+        <button class="filter-btn" data-cat="mains">Mains</button>
+        <button class="filter-btn" data-cat="drinks">Cold Drinks</button>
+    </nav>
+
+    <div class="container" id="menu-list">
+        
+        <section class="category-section" data-cat="new">
+            <h2 class="section-title">New Arrivals</h2>
+            <div class="menu-item"><span>Korean Burger</span><span class="price">140/-</span></div>
+            <div class="menu-item"><span>Paneer Makhani Rice Bowl</span><span class="price">220/-</span></div>
+            <div class="menu-item"><span>Italian Rice Bowl</span><span class="price">200/-</span></div>
+            <div class="menu-item"><span>Pot Rice</span><span class="price">250/-</span></div>
+            <div class="menu-item"><span>Korean Rice Bowl</span><span class="price">240/-</span></div>
+        </section>
+
+        <section class="category-section" data-cat="chai">
+            <h2 class="section-title">Chai (Kulhad)</h2>
+            <div class="menu-item"><span>Adrak Chai</span><span class="price">15 / 50</span></div>
+            <div class="menu-item"><span>Elaichi Chai</span><span class="price">15 / 50</span></div>
+            <div class="menu-item"><span>Pan Chai</span><span class="price">25 / 60</span></div>
+            <div class="menu-item"><span>Chocolate Chai</span><span class="price">25 / 60</span></div>
+            <div class="menu-item"><span>Rose Chai</span><span class="price">25 / 60</span></div>
+            <div class="menu-item"><span>Masala Chai</span><span class="price">25 / 65</span></div>
+            <div class="menu-item"><span>Saffron Chai</span><span class="price">25 / 65</span></div>
+            <div class="menu-item"><span>Ukala</span><span class="price">30 / 65</span></div>
+            <div class="extra-note"><span>* Chai Without Sugar — 10/- Extra</span></div>
+        </section>
+
+        <section class="category-section" data-cat="chai">
+            <h2 class="section-title">Coffee (Small / Medium)</h2>
+            <div class="menu-item"><span>Hot Coffee</span><span class="price">25 / 65</span></div>
+            <div class="menu-item"><span>Strong Hot Coffee</span><span class="price">30 / 70</span></div>
+            <div class="menu-item"><span>Chocolate Hot Coffee</span><span class="price">35 / 75</span></div>
+            <div class="menu-item"><span>Strong Choco Coffee</span><span class="price">40 / 80</span></div>
+            <div class="menu-item"><span>Black Coffee</span><span class="price">30 / --</span></div>
+            <div class="menu-item"><span>Caramel Coffee</span><span class="price">-- / 70</span></div>
+            <div class="menu-item"><span>Irish Coffee</span><span class="price">-- / 70</span></div>
+            <div class="menu-item"><span>Hazelnut Coffee</span><span class="price">-- / 70</span></div>
+            <div class="menu-item"><span>Hot Chocolate</span><span class="price">-- / 70</span></div>
+            <div class="extra-note"><span>* Coffee Without Sugar — 10/- Extra</span></div>
+        </section>
+
+        <section class="category-section" data-cat="chai">
+            <h2 class="section-title">Cold Coffee</h2>
+            <div class="menu-item"><span>Cold Coffee</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Chocolate Cold Coffee</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Strong Cold Coffee</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Cold Coffee with Ice Cream</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Choco Cold Coffee with Ice Cream</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Brownie Cold Coffee</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Brownie Cold Coffee with Ice Cream</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Caramel Cold Coffee</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Irish Cold Coffee</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Hazelnut Cold Coffee</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Ultimate Cold Coffee</span><span class="price">180</span></div>
+            <div class="menu-item"><span>Baithack Special Cold Coffee</span><span class="price">180</span></div>
+            <div class="extra-note"><span>* Cold Coffee without Sugar — 10/- Extra</span></div>
+        </section>
+
+        <section class="category-section" data-cat="drinks">
+            <h2 class="section-title">Green Tea</h2>
+            <div class="menu-item"><span>Tulsi Ginger</span><span class="price">60</span></div>
+            <div class="menu-item"><span>Strawberry Hibiscus</span><span class="price">70</span></div>
+            <div class="menu-item"><span>Kashmiri Kahwa</span><span class="price">70</span></div>
+            <div class="menu-item"><span>Butterfly Pea</span><span class="price">80</span></div>
+            
+            <h2 class="section-title">Black Tea</h2>
+            <div class="menu-item"><span>Black Tea</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Lemon Black Tea</span><span class="price">40</span></div>
+            <div class="menu-item"><span>Special Black Tea</span><span class="price">50</span></div>
+            <div class="extra-note"><span>* Tea With Honey — 10/- Extra</span></div>
+        </section>
+
+        <section class="category-section" data-cat="snacks">
+            <h2 class="section-title">Fries</h2>
+            <div class="menu-item"><span>Salted Fries</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Masala Fries</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Peri Peri Fries</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Loaded Fries</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Cheesey Fries</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Peri Peri Loaded Fries</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Pizza Fries</span><span class="price">190</span></div>
+        </section>
+
+        <section class="category-section" data-cat="snacks">
+            <h2 class="section-title">Hot Bites</h2>
+            <div class="menu-item"><span>Ring Onion</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Punjabi Samosa</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Garlic Shots</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Pizza Pocket (Mini Puff)</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Veggie Nuggets</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Potato Wedges</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Cheese Shots</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Cheesy Corn Triangle</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Cheesy Pizza Fingers</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Cheese Jalapeno Poppers</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Chilli Potato Wedges</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Chilli Fries</span><span class="price">150</span></div>
+        </section>
+
+        <section class="category-section" data-cat="snacks">
+            <h2 class="section-title">Breads & Buns</h2>
+            <div class="menu-item"><span>Bun Maska</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Bun Maska Jam</span><span class="price">40</span></div>
+            <div class="menu-item"><span>Garlic Bun Maska</span><span class="price">50</span></div>
+            <div class="menu-item"><span>Bread Butter Toast</span><span class="price">50</span></div>
+            <div class="menu-item"><span>Bread Jam Toast</span><span class="price">60</span></div>
+            <div class="menu-item"><span>Bun Maska Jam Cheese</span><span class="price">60</span></div>
+            <div class="menu-item"><span>Nutella Chocolate Bun Maska</span><span class="price">70</span></div>
+            <div class="menu-item"><span>Garlic Bread</span><span class="price">80</span></div>
+            <div class="menu-item"><span>Cheese Garlic Bread</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Cheese Chilli Toast</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Cheese Burst Garlic Bread</span><span class="price">130</span></div>
+        </section>
+
+        <section class="category-section" data-cat="snacks">
+            <h2 class="section-title">Maggie</h2>
+            <div class="menu-item"><span>Plain Maggie</span><span class="price">50</span></div>
+            <div class="menu-item"><span>Masala Maggie</span><span class="price">60</span></div>
+            <div class="menu-item"><span>Veg. Masala Maggie</span><span class="price">70</span></div>
+            <div class="menu-item"><span>Schezwan Maggie</span><span class="price">80</span></div>
+            <div class="menu-item"><span>Peri Peri Maggie</span><span class="price">90</span></div>
+            <div class="menu-item"><span>Punjabi Tadka Maggie</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Cheese Butter Maggie</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Tandoori Tadka Maggie</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Baithack Spl. Maggie</span><span class="price">120</span></div>
+        </section>
+
+        <section class="category-section" data-cat="mains">
+            <h2 class="section-title">Pizza</h2>
+            <div class="menu-item"><span>Onion Pizza</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Corn Pizza</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Corn & Onion Pizza</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Veggies Pizza</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Double Cheese Pizza</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Paneer Makhani Pizza</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Olive Baby Corn Pizza</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Spicy Mexican Pizza</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Cheese Burst Pizza</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Peri Peri Paneer Pizza</span><span class="price">180</span></div>
+            <div class="menu-item"><span>Baithack Spl. Pizza</span><span class="price">190</span></div>
+        </section>
+
+        <section class="category-section" data-cat="mains">
+            <h2 class="section-title">Pasta</h2>
+            <div class="menu-item"><span>Aglio Olio in Penne</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Red Sauce Pasta</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Schezwan Sauce Pasta</span><span class="price">150</span></div>
+            <div class="menu-item"><span>White Sauce Pasta</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Pink Sauce Pasta</span><span class="price">170</span></div>
+            <div class="menu-item"><span>Creamy Mushroom Pasta</span><span class="price">180</span></div>
+            <div class="menu-item"><span>Peri Peri Fries Pasta</span><span class="price">190</span></div>
+        </section>
+
+        <section class="category-section" data-cat="mains">
+            <h2 class="section-title">Burger</h2>
+            <div class="menu-item"><span>Veg. Burger</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Veg. Cheese Burger</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Schezwan Burger</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Paneer Burger</span><span class="price">150</span></div>
+            
+            <h2 class="section-title">Momos</h2>
+            <div class="menu-item"><span>Veg Momos</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Paneer Momos</span><span class="price">120</span></div>
+        </section>
+
+        <section class="category-section" data-cat="mains">
+            <h2 class="section-title">Kulhad Pizza & Nachos</h2>
+            <div class="menu-item"><span>Veggie Kulhad Pizza</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Golden Corn Kulhad Pizza</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Paneer Makhani Kulhad Pizza</span><span class="price">150</span></div>
+            
+            <div class="menu-item"><span>Jalapeno Nachos</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Peri Peri Nachos</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Cheese & Herbs Nachos</span><span class="price">150</span></div>
+        </section>
+
+        <section class="category-section" data-cat="mains">
+            <h2 class="section-title">Sandwich</h2>
+            <div class="menu-item header"><span class="price-header">Item Name</span><span class="price-header">Veg / Cheese</span></div>
+            <div class="menu-item"><span>Veg. Mayo</span><span class="price">90 / 110</span></div>
+            <div class="menu-item"><span>Grill Veggies</span><span class="price">90 / 110</span></div>
+            <div class="menu-item"><span>Chilli Chatakdar</span><span class="price">90 / 110</span></div>
+            <div class="menu-item"><span>Thousand Island</span><span class="price">100 / 120</span></div>
+            <div class="menu-item"><span>Corn Mayo</span><span class="price">100 / 120</span></div>
+            <div class="menu-item"><span>Tandoori Tadka</span><span class="price">110 / 130</span></div>
+            <div class="menu-item"><span>Paneer Majedar</span><span class="price">120 / 140</span></div>
+            <div class="menu-item"><span>Paneer Kadai</span><span class="price">120 / 140</span></div>
+            <div class="menu-item"><span>Chocolate Sandwich</span><span class="price">150</span></div>
+            <div class="extra-note"><span>* Any Sandwich in Brown Bread — 30/- Extra</span></div>
+        </section>
+
+        <section class="category-section" data-cat="mains">
+            <h2 class="section-title">Panini & Wraps</h2>
+            <div class="menu-item"><span>Coleslaw Panini</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Veg Panini</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Paneer Tandoori Panini</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Paneer Tikka Panini</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Falafel Wrap</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Paneer Tikka Wrap</span><span class="price">160</span></div>
+        </section>
+
+        <section class="category-section" data-cat="drinks">
+            <h2 class="section-title">Ice Tea & Bubble Tea</h2>
+            <div class="menu-item"><span>Lemon Ice Tea</span><span class="price">90</span></div>
+            <div class="menu-item"><span>Classic Ice Tea</span><span class="price">100</span></div>
+            <div class="menu-item"><span>Peach Ice Tea</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Mixberry Ice Tea</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Lychee Ice Tea</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Green Apple Ice Tea</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Watermelon Ice Tea</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Green Apple Bubble Tea</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Peach Bubble Tea</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Lychee Bubble Tea</span><span class="price">160</span></div>
+        </section>
+
+        <section class="category-section" data-cat="drinks">
+            <h2 class="section-title">Frappe</h2>
+            <div class="menu-item"><span>Hazelnut Frappe</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Irish Frappe</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Caramel Frappe</span><span class="price">150</span></div>
+            <div class="menu-item"><span>Mixberry Frappe</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Blueberry Frappe</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Strawberry Oreo Frappe</span><span class="price">160</span></div>
+        </section>
+
+        <section class="category-section" data-cat="shakes">
+            <h2 class="section-title">Thick Shakes</h2>
+            <div class="menu-item"><span>Vanilla Shake</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Mango Shake</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Strawberry Shake</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Butterscotch Shake</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Black Currant Shake</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Exotic Chocolate Shake</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Nutella Shake</span><span class="price">160</span></div>
+            
+            <h2 class="section-title">Shakes</h2>
+            <div class="menu-item"><span>Oreo Shake</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Cadbury Shake</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Kitkat Shake</span><span class="price">130</span></div>
+            <div class="menu-item"><span>Brownie Shake</span><span class="price">140</span></div>
+        </section>
+
+        <section class="category-section" data-cat="drinks">
+            <h2 class="section-title">Coolers</h2>
+            <div class="menu-item"><span>Virgin Mojito</span><span class="price">110</span></div>
+            <div class="menu-item"><span>Lychee Cooler</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Blue Moon Cooler</span><span class="price">120</span></div>
+            <div class="menu-item"><span>Cranberry Cooler</span><span class="price">140</span></div>
+            <div class="menu-item"><span>Green Apple Cooler</span><span class="price">140</span></div>
+        </section>
+
+        <section class="category-section" data-cat="shakes">
+            <h2 class="section-title">Sizzling Brownies</h2>
+            <div class="menu-item"><span>Classic Brownie</span><span class="price">160</span></div>
+            <div class="menu-item"><span>Walnut Brownie</span><span class="price">180</span></div>
+            <div class="menu-item"><span>Double Chocolate Brownie</span><span class="price">180</span></div>
+        </section>
+
+        <section class="category-section" data-cat="all">
+            <h2 class="section-title">Extra Add-ons</h2>
+            <div class="menu-item"><span>Mayo</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Salsa</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Cheese</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Toppings</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Jalapeno</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Chipotle</span><span class="price">30</span></div>
+            <div class="menu-item"><span>Water Bottle</span><span class="price">MRP</span></div>
+        </section>
+
+    </div>
+
+    <footer>
+        <span class="quality-quote">"We source only the finest, freshest ingredients for every dish we serve, You can taste our commitment to quality in every bite." [cite: 134]</span>
+        <p>Open Daily: 8AM - 11PM | www.baithack.com</p>
+    </footer>
+
+    <script>
+        const searchInput = document.getElementById("search-box");
+        const items = document.querySelectorAll(".menu-item");
+        const filterBtns = document.querySelectorAll(".filter-btn");
+        const categories = document.querySelectorAll(".category-section");
+
+        // Combined logic: Search within active category
+        function filterMenu() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeCat = document.querySelector(".filter-btn.active").getAttribute("data-cat");
+
+            categories.forEach(section => {
+                const sectionCat = section.getAttribute("data-cat");
+                const isCatMatch = (activeCat === "all" || sectionCat === activeCat);
+                
+                let hasVisibleItems = false;
+                const sectionItems = section.querySelectorAll(".menu-item:not(.header)");
+                
+                sectionItems.forEach(item => {
+                    const itemName = item.querySelector("span").textContent.toLowerCase();
+                    const isSearchMatch = itemName.includes(searchTerm);
+                    
+                    if (isCatMatch && isSearchMatch) {
+                        item.style.display = "flex";
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+
+                // Hide the entire section if no items match or category doesn't match
+                section.style.display = hasVisibleItems ? "block" : "none";
+            });
+        }
+
+        searchInput.addEventListener("keyup", filterMenu);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                filterMenu();
+            });
+        });
+    </script>
+</body>
+</html>
