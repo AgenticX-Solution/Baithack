@@ -122,6 +122,155 @@
             justify-content: space-between;
             align-items: center;
         }
+   /* Cart & Modal Styles */
+    .add-btn {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: 10px;
+        transition: transform 0.1s;
+    }
+    .add-btn:active { transform: scale(0.95); }
+    .add-btn-group { display: flex; gap: 5px; flex-direction: column; align-items: flex-end; }
+
+    #floating-cart-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--accent);
+        color: #000;
+        padding: 15px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(255,140,0,0.4);
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1000;
+        display: none; /* Hidden if empty */
+        animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+    }
+    .modal-content {
+        background: #222;
+        border: 1px solid var(--accent);
+        padding: 25px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        color: #fff;
+    }
+    .close-modal {
+        position: absolute;
+        top: 10px; right: 15px;
+        background: none;
+        border: none;
+        color: #aaa;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.9rem;
+    }
+    .cart-controls button {
+        background: #444; color: #fff; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer;
+    }
+    .cart-total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 15px;
+        text-align: right;
+        color: var(--accent);
+    }
+    .checkout-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+    
+    .qr-container { text-align: center; margin-top: 20px; }
+    .qr-img { width: 200px; height: 200px; background: #fff; padding: 10px; border-radius: 10px; }
+    .payment-options { display: flex; gap: 10px; margin-top: 20px; }
+    .pay-opt-btn { flex: 1; padding: 10px; background: #333; border: 1px solid #555; color: #fff; border-radius: 8px; cursor: pointer; }
+    .pay-opt-btn.active { border-color: var(--accent); background: rgba(255,140,0,0.1); }
+   /* Design Fixes */
+    .menu-item {
+        gap: 15px;
+        align-items: flex-start; /* Align top for better multiline handling */
+    }
+
+    .menu-item-content {
+        display: grid;
+        grid-template-columns: 1fr auto auto; /* Name | Price | Button */
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* For mobile responsiveness */
+    @media (max-width: 600px) {
+        .menu-item-content {
+            grid-template-columns: 1fr auto;
+            grid-template-areas: 
+                "name name"
+                "price button";
+        }
+        .menu-item-content > span:first-child { grid-area: name; font-weight: 500; font-size: 1.05rem; }
+        .price { grid-area: price; }
+        .add-btn, .add-btn-group { grid-area: button; margin-left: 0; }
+    }
+
+    /* Desktop/Tablet adjustments */
+    @media (min-width: 601px) {
+        .menu-item-content > span:first-child {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    }
+    
+    .price {
+        white-space: nowrap;
+    }
+    
+    /* Hide the original price display if we have split buttons */
+    /* Because the buttons show the price (e.g. + Small 15) */
+    /* We detect if .add-btn-group is present next to .price */
+    /* CSS :has() is modern, let's use JS to hide redundant prices or just keep them small */
+    
+    .price {
+        color: var(--accent);
+        font-weight: bold;
+        min-width: 60px;
+        text-align: right;
+    }
   </style>
  </head>
  <body>
@@ -175,6 +324,9 @@
       <span class="price">
        140/-
       </span>
+      <button class="add-btn" onclick="addToCart('Korean Burger', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -186,6 +338,9 @@
       <span class="price">
        220/-
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Makhani Rice Bowl', 220)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -197,6 +352,9 @@
       <span class="price">
        200/-
       </span>
+      <button class="add-btn" onclick="addToCart('Italian Rice Bowl', 200)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -208,6 +366,9 @@
       <span class="price">
        250/-
       </span>
+      <button class="add-btn" onclick="addToCart('Pot Rice', 250)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -219,6 +380,9 @@
       <span class="price">
        240/-
       </span>
+      <button class="add-btn" onclick="addToCart('Korean Rice Bowl', 240)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -232,9 +396,17 @@
       <span>
        Adrak Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        15 / 50
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Adrak Chai (Small)', 15)">
+        + Small 15
+       </button>
+       <button class="add-btn" onclick="addToCart('Adrak Chai (Large)', 50)">
+        + Large 50
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -243,9 +415,17 @@
       <span>
        Elaichi Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        15 / 50
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Elaichi Chai (Small)', 15)">
+        + Small 15
+       </button>
+       <button class="add-btn" onclick="addToCart('Elaichi Chai (Large)', 50)">
+        + Large 50
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -254,9 +434,17 @@
       <span>
        Pan Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        25 / 60
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Pan Chai (Small)', 25)">
+        + Small 25
+       </button>
+       <button class="add-btn" onclick="addToCart('Pan Chai (Large)', 60)">
+        + Large 60
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -265,9 +453,17 @@
       <span>
        Chocolate Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        25 / 60
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Chocolate Chai (Small)', 25)">
+        + Small 25
+       </button>
+       <button class="add-btn" onclick="addToCart('Chocolate Chai (Large)', 60)">
+        + Large 60
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -276,9 +472,17 @@
       <span>
        Rose Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        25 / 60
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Rose Chai (Small)', 25)">
+        + Small 25
+       </button>
+       <button class="add-btn" onclick="addToCart('Rose Chai (Large)', 60)">
+        + Large 60
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -287,9 +491,17 @@
       <span>
        Masala Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        25 / 65
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Masala Chai (Small)', 25)">
+        + Small 25
+       </button>
+       <button class="add-btn" onclick="addToCart('Masala Chai (Large)', 65)">
+        + Large 65
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -298,9 +510,17 @@
       <span>
        Saffron Chai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        25 / 65
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Saffron Chai (Small)', 25)">
+        + Small 25
+       </button>
+       <button class="add-btn" onclick="addToCart('Saffron Chai (Large)', 65)">
+        + Large 65
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -309,9 +529,17 @@
       <span>
        Ukala
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        30 / 65
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Ukala (Small)', 30)">
+        + Small 30
+       </button>
+       <button class="add-btn" onclick="addToCart('Ukala (Large)', 65)">
+        + Large 65
+       </button>
+      </div>
      </div>
     </div>
     <div class="extra-note">
@@ -330,9 +558,17 @@
       <span>
        Hot Coffee
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        25 / 65
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Hot Coffee (Small)', 25)">
+        + Small 25
+       </button>
+       <button class="add-btn" onclick="addToCart('Hot Coffee (Large)', 65)">
+        + Large 65
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -341,9 +577,17 @@
       <span>
        Strong Hot Coffee
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        30 / 70
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Strong Hot Coffee (Small)', 30)">
+        + Small 30
+       </button>
+       <button class="add-btn" onclick="addToCart('Strong Hot Coffee (Large)', 70)">
+        + Large 70
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -352,18 +596,39 @@
       <span>
        Chocolate Hot Coffee
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        35 / 75
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Chocolate Hot Coffee (Small)', 35)">
+        + Small 35
+       </button>
+       <button class="add-btn" onclick="addToCart('Chocolate Hot Coffee (Large)', 75)">
+        + Large 75
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Strong Choco Coffee
-     </span>
-     <span class="price">
-      40 / 80
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Strong Choco Coffee
+      </span>
+      <span class="price">
+       40 / 80
+      </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Strong Choco Coffee (Small)', 40)">
+        + Small 40
+       </button>
+       <button class="add-btn" onclick="addToCart('Strong Choco Coffee (Large)', 80)">
+        + Large 80
+       </button>
+      </div>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Black Coffee" class="menu-item-img" loading="lazy" src="assets/BLACK COFFEE.jpg"/>
@@ -371,34 +636,69 @@
       <span>
        Black Coffee
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        30 / --
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Black Coffee (Small)', 30)">
+        + Small 30
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Caramel Coffee
-     </span>
-     <span class="price">
-      -- / 70
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Caramel Coffee
+      </span>
+      <span class="price">
+       -- / 70
+      </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Caramel Coffee (Large)', 70)">
+        + Large 70
+       </button>
+      </div>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Irish Coffee
-     </span>
-     <span class="price">
-      -- / 70
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Irish Coffee
+      </span>
+      <span class="price">
+       -- / 70
+      </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Irish Coffee (Large)', 70)">
+        + Large 70
+       </button>
+      </div>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Hazelnut Coffee
-     </span>
-     <span class="price">
-      -- / 70
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Hazelnut Coffee
+      </span>
+      <span class="price">
+       -- / 70
+      </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Hazelnut Coffee (Large)', 70)">
+        + Large 70
+       </button>
+      </div>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Hot Chocolate" class="menu-item-img" loading="lazy" src="assets/HOT CHOCOLATE.jpg"/>
@@ -406,9 +706,14 @@
       <span>
        Hot Chocolate
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        -- / 70
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Hot Chocolate (Large)', 70)">
+        + Large 70
+       </button>
+      </div>
      </div>
     </div>
     <div class="extra-note">
@@ -430,6 +735,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Cold Coffee', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -441,6 +749,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Chocolate Cold Coffee', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -452,6 +763,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Strong Cold Coffee', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -463,15 +777,26 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Cold Coffee with Ice Cream', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Choco Cold Coffee with Ice Cream
-     </span>
-     <span class="price">
-      140
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Choco Cold Coffee with Ice Cream
+      </span>
+      <span class="price">
+       140
+      </span>
+      <button class="add-btn" onclick="addToCart('Choco Cold Coffee with Ice Cream', 140)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Brownie Cold Coffee" class="menu-item-img" loading="lazy" src="assets/BROWNIE COLD COFFEE.jpg"/>
@@ -482,6 +807,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Brownie Cold Coffee', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -493,6 +821,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Brownie Cold Coffee with Ice Cream', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -504,6 +835,9 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('Caramel Cold Coffee', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -515,6 +849,9 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('Irish Cold Coffee', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -526,6 +863,9 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('Hazelnut Cold Coffee', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -537,6 +877,9 @@
       <span class="price">
        180
       </span>
+      <button class="add-btn" onclick="addToCart('Ultimate Cold Coffee', 180)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -548,6 +891,9 @@
       <span class="price">
        180
       </span>
+      <button class="add-btn" onclick="addToCart('Baithack Special Cold Coffee', 180)">
+       Add
+      </button>
      </div>
     </div>
     <div class="extra-note">
@@ -561,36 +907,68 @@
      Green Tea
     </h2>
     <div class="menu-item">
-     <span>
-      Tulsi Ginger
-     </span>
-     <span class="price">
-      60
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Tulsi Ginger
+      </span>
+      <span class="price">
+       60
+      </span>
+      <button class="add-btn" onclick="addToCart('Tulsi Ginger', 60)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Strawberry Hibiscus
-     </span>
-     <span class="price">
-      70
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Strawberry Hibiscus
+      </span>
+      <span class="price">
+       70
+      </span>
+      <button class="add-btn" onclick="addToCart('Strawberry Hibiscus', 70)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Kashmiri Kahwa
-     </span>
-     <span class="price">
-      70
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Kashmiri Kahwa
+      </span>
+      <span class="price">
+       70
+      </span>
+      <button class="add-btn" onclick="addToCart('Kashmiri Kahwa', 70)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Butterfly Pea
-     </span>
-     <span class="price">
-      80
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Butterfly Pea
+      </span>
+      <span class="price">
+       80
+      </span>
+      <button class="add-btn" onclick="addToCart('Butterfly Pea', 80)">
+       Add
+      </button>
+     </div>
     </div>
     <h2 class="section-title">
      Black Tea
@@ -604,6 +982,9 @@
       <span class="price">
        30
       </span>
+      <button class="add-btn" onclick="addToCart('Black Tea', 30)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -615,6 +996,9 @@
       <span class="price">
        40
       </span>
+      <button class="add-btn" onclick="addToCart('Lemon Black Tea', 40)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -626,6 +1010,9 @@
       <span class="price">
        50
       </span>
+      <button class="add-btn" onclick="addToCart('Special Black Tea', 50)">
+       Add
+      </button>
      </div>
     </div>
     <div class="extra-note">
@@ -647,6 +1034,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Salted Fries', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -658,6 +1048,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Masala Fries', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -669,6 +1062,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Peri Peri Fries', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -680,6 +1076,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Loaded Fries', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -691,6 +1090,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Cheesey Fries', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -702,6 +1104,9 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('Peri Peri Loaded Fries', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -713,6 +1118,9 @@
       <span class="price">
        190
       </span>
+      <button class="add-btn" onclick="addToCart('Pizza Fries', 190)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -729,6 +1137,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Ring Onion', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -740,6 +1151,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Punjabi Samosa', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -751,15 +1165,26 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Garlic Shots', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Pizza Pocket (Mini Puff)
-     </span>
-     <span class="price">
-      120
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Pizza Pocket (Mini Puff)
+      </span>
+      <span class="price">
+       120
+      </span>
+      <button class="add-btn" onclick="addToCart('Pizza Pocket (Mini Puff)', 120)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Veggie Nuggets" class="menu-item-img" loading="lazy" src="assets/VEGGIE_S NUGGET.jpg"/>
@@ -770,6 +1195,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Veggie Nuggets', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -781,6 +1209,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Potato Wedges', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -792,15 +1223,26 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Shots', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Cheesy Corn Triangle
-     </span>
-     <span class="price">
-      140
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Cheesy Corn Triangle
+      </span>
+      <span class="price">
+       140
+      </span>
+      <button class="add-btn" onclick="addToCart('Cheesy Corn Triangle', 140)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Cheesy Pizza Fingers" class="menu-item-img" loading="lazy" src="assets/CHEESY PIZZA FINGERS.jpg"/>
@@ -811,6 +1253,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Cheesy Pizza Fingers', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -822,15 +1267,26 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Jalapeno Poppers', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Chilli Potato Wedges
-     </span>
-     <span class="price">
-      150
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Chilli Potato Wedges
+      </span>
+      <span class="price">
+       150
+      </span>
+      <button class="add-btn" onclick="addToCart('Chilli Potato Wedges', 150)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Chilli Fries" class="menu-item-img" loading="lazy" src="assets/CHILLI FRIES.jpg"/>
@@ -841,6 +1297,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Chilli Fries', 150)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -857,6 +1316,9 @@
       <span class="price">
        30
       </span>
+      <button class="add-btn" onclick="addToCart('Bun Maska', 30)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -868,6 +1330,9 @@
       <span class="price">
        40
       </span>
+      <button class="add-btn" onclick="addToCart('Bun Maska Jam', 40)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -879,6 +1344,9 @@
       <span class="price">
        50
       </span>
+      <button class="add-btn" onclick="addToCart('Garlic Bun Maska', 50)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -890,15 +1358,26 @@
       <span class="price">
        50
       </span>
+      <button class="add-btn" onclick="addToCart('Bread Butter Toast', 50)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Bread Jam Toast
-     </span>
-     <span class="price">
-      60
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Bread Jam Toast
+      </span>
+      <span class="price">
+       60
+      </span>
+      <button class="add-btn" onclick="addToCart('Bread Jam Toast', 60)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Bun Maska Jam Cheese" class="menu-item-img" loading="lazy" src="assets/BUN MUSKA JAM CHEESE.jpg"/>
@@ -909,6 +1388,9 @@
       <span class="price">
        60
       </span>
+      <button class="add-btn" onclick="addToCart('Bun Maska Jam Cheese', 60)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -920,6 +1402,9 @@
       <span class="price">
        70
       </span>
+      <button class="add-btn" onclick="addToCart('Nutella Chocolate Bun Maska', 70)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -931,6 +1416,9 @@
       <span class="price">
        80
       </span>
+      <button class="add-btn" onclick="addToCart('Garlic Bread', 80)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -942,6 +1430,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Garlic Bread', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -953,6 +1444,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Chilli Toast', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -964,6 +1458,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Burst Garlic Bread', 130)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -980,6 +1477,9 @@
       <span class="price">
        50
       </span>
+      <button class="add-btn" onclick="addToCart('Plain Maggie', 50)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -991,6 +1491,9 @@
       <span class="price">
        60
       </span>
+      <button class="add-btn" onclick="addToCart('Masala Maggie', 60)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1002,6 +1505,9 @@
       <span class="price">
        70
       </span>
+      <button class="add-btn" onclick="addToCart('Veg. Masala Maggie', 70)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1013,6 +1519,9 @@
       <span class="price">
        80
       </span>
+      <button class="add-btn" onclick="addToCart('Schezwan Maggie', 80)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1024,6 +1533,9 @@
       <span class="price">
        90
       </span>
+      <button class="add-btn" onclick="addToCart('Peri Peri Maggie', 90)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1035,6 +1547,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Punjabi Tadka Maggie', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1046,6 +1561,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Butter Maggie', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1057,6 +1575,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Tandoori Tadka Maggie', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1068,6 +1589,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Baithack Spl. Maggie', 120)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1084,6 +1608,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Onion Pizza', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1095,6 +1622,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Corn Pizza', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1106,6 +1636,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Corn &amp; Onion Pizza', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1117,6 +1650,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Veggies Pizza', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1128,6 +1664,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Double Cheese Pizza', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1139,6 +1678,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Makhani Pizza', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1150,15 +1692,26 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Olive Baby Corn Pizza', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Spicy Mexican Pizza
-     </span>
-     <span class="price">
-      160
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Spicy Mexican Pizza
+      </span>
+      <span class="price">
+       160
+      </span>
+      <button class="add-btn" onclick="addToCart('Spicy Mexican Pizza', 160)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Cheese Burst Pizza" class="menu-item-img" loading="lazy" src="assets/CHEESE BURST PIZZA.jpg"/>
@@ -1169,15 +1722,26 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('Cheese Burst Pizza', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Peri Peri Paneer Pizza
-     </span>
-     <span class="price">
-      180
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Peri Peri Paneer Pizza
+      </span>
+      <span class="price">
+       180
+      </span>
+      <button class="add-btn" onclick="addToCart('Peri Peri Paneer Pizza', 180)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Baithack Spl. Pizza" class="menu-item-img" loading="lazy" src="assets/BAITHACK SPECIAL PIZZA.jpg"/>
@@ -1188,6 +1752,9 @@
       <span class="price">
        190
       </span>
+      <button class="add-btn" onclick="addToCart('Baithack Spl. Pizza', 190)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1204,6 +1771,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Aglio Olio in Penne', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1215,15 +1785,26 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Red Sauce Pasta', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Schezwan Sauce Pasta
-     </span>
-     <span class="price">
-      150
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Schezwan Sauce Pasta
+      </span>
+      <span class="price">
+       150
+      </span>
+      <button class="add-btn" onclick="addToCart('Schezwan Sauce Pasta', 150)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="White Sauce Pasta" class="menu-item-img" loading="lazy" src="assets/WHITE SAUCE PASTA 1.jpg"/>
@@ -1234,6 +1815,9 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('White Sauce Pasta', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1245,15 +1829,26 @@
       <span class="price">
        170
       </span>
+      <button class="add-btn" onclick="addToCart('Pink Sauce Pasta', 170)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Creamy Mushroom Pasta
-     </span>
-     <span class="price">
-      180
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Creamy Mushroom Pasta
+      </span>
+      <span class="price">
+       180
+      </span>
+      <button class="add-btn" onclick="addToCart('Creamy Mushroom Pasta', 180)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Peri Peri Fries Pasta" class="menu-item-img" loading="lazy" src="assets/PERI PERI FRIES PASTA.jpg"/>
@@ -1264,6 +1859,9 @@
       <span class="price">
        190
       </span>
+      <button class="add-btn" onclick="addToCart('Peri Peri Fries Pasta', 190)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1280,6 +1878,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Veg. Burger', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1291,6 +1892,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Veg. Cheese Burger', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1302,6 +1906,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Schezwan Burger', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1313,6 +1920,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Burger', 150)">
+       Add
+      </button>
      </div>
     </div>
     <h2 class="section-title">
@@ -1327,6 +1937,9 @@
       <span class="price">
        100
       </span>
+      <button class="add-btn" onclick="addToCart('Veg Momos', 100)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1338,6 +1951,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Momos', 120)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1354,6 +1970,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Veggie Kulhad Pizza', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1365,6 +1984,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Golden Corn Kulhad Pizza', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1376,6 +1998,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Makhani Kulhad Pizza', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1387,6 +2012,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Jalapeno Nachos', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1398,15 +2026,26 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Peri Peri Nachos', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Cheese &amp; Herbs Nachos
-     </span>
-     <span class="price">
-      150
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Cheese &amp; Herbs Nachos
+      </span>
+      <span class="price">
+       150
+      </span>
+      <button class="add-btn" onclick="addToCart('Cheese &amp; Herbs Nachos', 150)">
+       Add
+      </button>
+     </div>
     </div>
    </section>
    <section class="category-section" data-cat="mains">
@@ -1427,26 +2066,60 @@
       <span>
        Veg. Mayo
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        90 / 110
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Veg. Mayo (Reg)', 90)">
+        + Reg 90
+       </button>
+       <button class="add-btn" onclick="addToCart('Veg. Mayo (Lrg)', 110)">
+        + Lrg 110
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Grill Veggies
-     </span>
-     <span class="price">
-      90 / 110
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Grill Veggies
+      </span>
+      <span class="price">
+       90 / 110
+      </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Grill Veggies (Reg)', 90)">
+        + Reg 90
+       </button>
+       <button class="add-btn" onclick="addToCart('Grill Veggies (Lrg)', 110)">
+        + Lrg 110
+       </button>
+      </div>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Chilli Chatakdar
-     </span>
-     <span class="price">
-      90 / 110
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Chilli Chatakdar
+      </span>
+      <span class="price">
+       90 / 110
+      </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Chilli Chatakdar (Reg)', 90)">
+        + Reg 90
+       </button>
+       <button class="add-btn" onclick="addToCart('Chilli Chatakdar (Lrg)', 110)">
+        + Lrg 110
+       </button>
+      </div>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Thousand Island" class="menu-item-img" loading="lazy" src="assets/THOUSAND ISLAND SANDWICH.jpg"/>
@@ -1454,9 +2127,17 @@
       <span>
        Thousand Island
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        100 / 120
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Thousand Island (Reg)', 100)">
+        + Reg 100
+       </button>
+       <button class="add-btn" onclick="addToCart('Thousand Island (Lrg)', 120)">
+        + Lrg 120
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -1465,9 +2146,17 @@
       <span>
        Corn Mayo
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        100 / 120
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Corn Mayo (Reg)', 100)">
+        + Reg 100
+       </button>
+       <button class="add-btn" onclick="addToCart('Corn Mayo (Lrg)', 120)">
+        + Lrg 120
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -1476,9 +2165,17 @@
       <span>
        Tandoori Tadka
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        110 / 130
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Tandoori Tadka (Reg)', 110)">
+        + Reg 110
+       </button>
+       <button class="add-btn" onclick="addToCart('Tandoori Tadka (Lrg)', 130)">
+        + Lrg 130
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -1487,9 +2184,17 @@
       <span>
        Paneer Majedar
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        120 / 140
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Paneer Majedar (Reg)', 120)">
+        + Reg 120
+       </button>
+       <button class="add-btn" onclick="addToCart('Paneer Majedar (Lrg)', 140)">
+        + Lrg 140
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -1498,9 +2203,17 @@
       <span>
        Paneer Kadai
       </span>
-      <span class="price">
+      <span class="price" style="display: none;">
        120 / 140
       </span>
+      <div class="add-btn-group">
+       <button class="add-btn" onclick="addToCart('Paneer Kadai (Reg)', 120)">
+        + Reg 120
+       </button>
+       <button class="add-btn" onclick="addToCart('Paneer Kadai (Lrg)', 140)">
+        + Lrg 140
+       </button>
+      </div>
      </div>
     </div>
     <div class="menu-item">
@@ -1512,6 +2225,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Chocolate Sandwich', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="extra-note">
@@ -1533,6 +2249,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Coleslaw Panini', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1544,15 +2263,26 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Veg Panini', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Paneer Tandoori Panini
-     </span>
-     <span class="price">
-      150
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Paneer Tandoori Panini
+      </span>
+      <span class="price">
+       150
+      </span>
+      <button class="add-btn" onclick="addToCart('Paneer Tandoori Panini', 150)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Paneer Tikka Panini" class="menu-item-img" loading="lazy" src="assets/PANEER TIKKA PANINI.jpg"/>
@@ -1563,15 +2293,26 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Tikka Panini', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Falafel Wrap
-     </span>
-     <span class="price">
-      160
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Falafel Wrap
+      </span>
+      <span class="price">
+       160
+      </span>
+      <button class="add-btn" onclick="addToCart('Falafel Wrap', 160)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Paneer Tikka Wrap" class="menu-item-img" loading="lazy" src="assets/PANEER TIKKA WRAP.jpg"/>
@@ -1582,6 +2323,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Paneer Tikka Wrap', 160)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1598,15 +2342,26 @@
       <span class="price">
        90
       </span>
+      <button class="add-btn" onclick="addToCart('Lemon Ice Tea', 90)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Classic Ice Tea
-     </span>
-     <span class="price">
-      100
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Classic Ice Tea
+      </span>
+      <span class="price">
+       100
+      </span>
+      <button class="add-btn" onclick="addToCart('Classic Ice Tea', 100)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Peach Ice Tea" class="menu-item-img" loading="lazy" src="assets/PEACH ICE TEA.jpg"/>
@@ -1617,6 +2372,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Peach Ice Tea', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1628,6 +2386,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Mixberry Ice Tea', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1639,6 +2400,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Lychee Ice Tea', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1650,6 +2414,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Green Apple Ice Tea', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1661,6 +2428,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Watermelon Ice Tea', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1672,6 +2442,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Green Apple Bubble Tea', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1683,6 +2456,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Peach Bubble Tea', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1694,6 +2470,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Lychee Bubble Tea', 160)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1710,6 +2489,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Hazelnut Frappe', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1721,6 +2503,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Irish Frappe', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1732,6 +2517,9 @@
       <span class="price">
        150
       </span>
+      <button class="add-btn" onclick="addToCart('Caramel Frappe', 150)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1743,6 +2531,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Mixberry Frappe', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1754,6 +2545,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Blueberry Frappe', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1765,6 +2559,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Strawberry Oreo Frappe', 160)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1773,52 +2570,100 @@
      Thick Shakes
     </h2>
     <div class="menu-item">
-     <span>
-      Vanilla Shake
-     </span>
-     <span class="price">
-      110
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Vanilla Shake
+      </span>
+      <span class="price">
+       110
+      </span>
+      <button class="add-btn" onclick="addToCart('Vanilla Shake', 110)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Mango Shake
-     </span>
-     <span class="price">
-      120
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Mango Shake
+      </span>
+      <span class="price">
+       120
+      </span>
+      <button class="add-btn" onclick="addToCart('Mango Shake', 120)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Strawberry Shake
-     </span>
-     <span class="price">
-      120
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Strawberry Shake
+      </span>
+      <span class="price">
+       120
+      </span>
+      <button class="add-btn" onclick="addToCart('Strawberry Shake', 120)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Butterscotch Shake
-     </span>
-     <span class="price">
-      120
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Butterscotch Shake
+      </span>
+      <span class="price">
+       120
+      </span>
+      <button class="add-btn" onclick="addToCart('Butterscotch Shake', 120)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Black Currant Shake
-     </span>
-     <span class="price">
-      130
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Black Currant Shake
+      </span>
+      <span class="price">
+       130
+      </span>
+      <button class="add-btn" onclick="addToCart('Black Currant Shake', 130)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Exotic Chocolate Shake
-     </span>
-     <span class="price">
-      140
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Exotic Chocolate Shake
+      </span>
+      <span class="price">
+       140
+      </span>
+      <button class="add-btn" onclick="addToCart('Exotic Chocolate Shake', 140)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
      <img alt="Nutella Shake" class="menu-item-img" loading="lazy" src="assets/NUTELLA SHAKE.jpg"/>
@@ -1829,6 +2674,9 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Nutella Shake', 160)">
+       Add
+      </button>
      </div>
     </div>
     <h2 class="section-title">
@@ -1843,6 +2691,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Oreo Shake', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1854,6 +2705,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Cadbury Shake', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1865,6 +2719,9 @@
       <span class="price">
        130
       </span>
+      <button class="add-btn" onclick="addToCart('Kitkat Shake', 130)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1876,6 +2733,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Brownie Shake', 140)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1892,6 +2752,9 @@
       <span class="price">
        110
       </span>
+      <button class="add-btn" onclick="addToCart('Virgin Mojito', 110)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1903,6 +2766,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Lychee Cooler', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1914,6 +2780,9 @@
       <span class="price">
        120
       </span>
+      <button class="add-btn" onclick="addToCart('Blue Moon Cooler', 120)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1925,6 +2794,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Cranberry Cooler', 140)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
@@ -1936,6 +2808,9 @@
       <span class="price">
        140
       </span>
+      <button class="add-btn" onclick="addToCart('Green Apple Cooler', 140)">
+       Add
+      </button>
      </div>
     </div>
    </section>
@@ -1952,23 +2827,42 @@
       <span class="price">
        160
       </span>
+      <button class="add-btn" onclick="addToCart('Classic Brownie', 160)">
+       Add
+      </button>
      </div>
     </div>
     <div class="menu-item">
-     <span>
-      Walnut Brownie
-     </span>
-     <span class="price">
-      180
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Walnut Brownie
+      </span>
+      <span class="price">
+       180
+      </span>
+      <button class="add-btn" onclick="addToCart('Walnut Brownie', 180)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Double Chocolate Brownie
-     </span>
-     <span class="price">
-      180
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Double Chocolate Brownie
+      </span>
+      <span class="price">
+       180
+      </span>
+      <button class="add-btn" onclick="addToCart('Double Chocolate Brownie', 180)">
+       Add
+      </button>
+     </div>
     </div>
    </section>
    <section class="category-section" data-cat="all">
@@ -1976,60 +2870,113 @@
      Extra Add-ons
     </h2>
     <div class="menu-item">
-     <span>
-      Mayo
-     </span>
-     <span class="price">
-      30
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Mayo
+      </span>
+      <span class="price">
+       30
+      </span>
+      <button class="add-btn" onclick="addToCart('Mayo', 30)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Salsa
-     </span>
-     <span class="price">
-      30
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Salsa
+      </span>
+      <span class="price">
+       30
+      </span>
+      <button class="add-btn" onclick="addToCart('Salsa', 30)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Cheese
-     </span>
-     <span class="price">
-      30
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Cheese
+      </span>
+      <span class="price">
+       30
+      </span>
+      <button class="add-btn" onclick="addToCart('Cheese', 30)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Toppings
-     </span>
-     <span class="price">
-      30
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Toppings
+      </span>
+      <span class="price">
+       30
+      </span>
+      <button class="add-btn" onclick="addToCart('Toppings', 30)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Jalapeno
-     </span>
-     <span class="price">
-      30
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Jalapeno
+      </span>
+      <span class="price">
+       30
+      </span>
+      <button class="add-btn" onclick="addToCart('Jalapeno', 30)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Chipotle
-     </span>
-     <span class="price">
-      30
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Chipotle
+      </span>
+      <span class="price">
+       30
+      </span>
+      <button class="add-btn" onclick="addToCart('Chipotle', 30)">
+       Add
+      </button>
+     </div>
     </div>
     <div class="menu-item">
-     <span>
-      Water Bottle
-     </span>
-     <span class="price">
-      MRP
-     </span>
+     <div class="menu-item-img" style="display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; background: #222;">
+      Baithack
+     </div>
+     <div class="menu-item-content">
+      <span>
+       Water Bottle
+      </span>
+      <span class="price">
+       MRP
+      </span>
+     </div>
     </div>
    </section>
   </div>
@@ -2085,6 +3032,228 @@
                 filterMenu();
             });
         });
+  </script>
+  <div id="floating-cart-btn" onclick="openCart()">
+   🛒
+   <span id="cart-count">
+    0
+   </span>
+   Items | ₹
+   <span id="cart-total-btn">
+    0
+   </span>
+  </div>
+  <!-- Cart Modal -->
+  <div class="modal-overlay" id="cart-modal">
+   <div class="modal-content">
+    <button class="close-modal" onclick="closeCart()">
+     ×
+    </button>
+    <h2 style="margin-top:0; color:var(--accent)">
+     Your Order
+    </h2>
+    <div id="cart-items-container">
+     <!-- Items go here -->
+     <p style="color:#888; text-align:center;">
+      Your cart is empty.
+     </p>
+    </div>
+    <div class="cart-total">
+     Total: ₹
+     <span id="cart-final-total">
+      0
+     </span>
+    </div>
+    <button class="checkout-btn" onclick="showPayment()">
+     Proceed to Pay
+    </button>
+   </div>
+  </div>
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="payment-modal">
+   <div class="modal-content">
+    <button class="close-modal" onclick="closePayment()">
+     ×
+    </button>
+    <h2 style="margin-top:0; color:var(--accent)">
+     Payment
+    </h2>
+    <p>
+     Total Amount:
+     <strong style="font-size:1.2rem">
+      ₹
+      <span id="pay-amount">
+       0
+      </span>
+     </strong>
+    </p>
+    <div class="payment-options">
+     <button class="pay-opt-btn active" onclick="selectPayment('upi')">
+      UPI / QR
+     </button>
+     <button class="pay-opt-btn" onclick="selectPayment('cash')">
+      Cash
+     </button>
+    </div>
+    <div class="qr-container" id="upi-section">
+     <p style="font-size:0.9rem; color:#aaa;">
+      Scan to Pay
+     </p>
+     <!-- Static QR Image -->
+     <img alt="UPI QR" class="qr-img" id="static-qr" src="assets/payment_qr.jpg" style="width: 100%; height: auto; max-width: 300px; object-fit: contain;"/>
+     <p style="margin-top:10px; font-size:0.9rem; color: var(--accent);">
+      UPI ID: paytm.s1m46nu@pty <br>
+      Phone: 9967636702
+     </p>
+    </div>
+    <div id="cash-section" style="display:none; text-align:center; padding:20px;">
+     <p>
+      Please pay at the counter.
+     </p>
+     <div style="font-size:2rem;">
+      💵
+     </div>
+    </div>
+    <button class="checkout-btn" onclick="confirmOrder()">
+     Done
+    </button>
+   </div>
+  </div>
+  <script>
+   // Cart Logic
+    let cart = [];
+
+    function addToCart(name, price) {
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+            existing.qty++;
+        } else {
+            cart.push({ name: name, price: price, qty: 1 });
+        }
+        updateCartUI();
+        showToast(`Added ${name}`);
+    }
+
+    function updateCartUI() {
+        const cartCount = document.getElementById('cart-count');
+        const cartTotalBtn = document.getElementById('cart-total-btn');
+        const cartFinalTotal = document.getElementById('cart-final-total');
+        const payAmount = document.getElementById('pay-amount');
+        const cartContainer = document.getElementById('cart-items-container');
+        const floatBtn = document.getElementById('floating-cart-btn');
+
+        let total = 0;
+        let count = 0;
+
+        cartContainer.innerHTML = '';
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = '<p style="color:#888; text-align:center;">Your cart is empty.</p>';
+            floatBtn.style.display = 'none';
+        } else {
+            floatBtn.style.display = 'block';
+            
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                count += item.qty;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <span>${item.name} <br><small>₹${item.price} each</small></span>
+                    <div class="cart-controls">
+                        <button onclick="changeQty(${index}, -1)">-</button>
+                        <span style="margin:0 5px">${item.qty}</span>
+                        <button onclick="changeQty(${index}, 1)">+</button>
+                    </div>
+                `;
+                cartContainer.appendChild(itemDiv);
+            });
+        }
+
+        cartCount.textContent = count;
+        cartTotalBtn.textContent = total;
+        cartFinalTotal.textContent = total;
+        payAmount.textContent = total;
+        
+        // Update QR Code Amount
+        // Update QR Code Amount - Disabled as we are using a static image
+        // const qrImg = document.getElementById('dynamic-qr');
+        // if(qrImg) {
+        //    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8855082930@upi&pn=Baithack&am=${total}`;
+        // }
+    }
+
+    function changeQty(index, delta) {
+        cart[index].qty += delta;
+        if (cart[index].qty <= 0) {
+            cart.splice(index, 1);
+        }
+        updateCartUI();
+    }
+
+    function openCart() {
+        document.getElementById('cart-modal').style.display = 'flex';
+    }
+
+    function closeCart() {
+        document.getElementById('cart-modal').style.display = 'none';
+    }
+
+    function showPayment() {
+        closeCart();
+        document.getElementById('payment-modal').style.display = 'flex';
+    }
+
+    function closePayment() {
+        document.getElementById('payment-modal').style.display = 'none';
+    }
+
+    function selectPayment(type) {
+        document.querySelectorAll('.pay-opt-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        if(type === 'upi') {
+            document.getElementById('upi-section').style.display = 'block';
+            document.getElementById('cash-section').style.display = 'none';
+        } else {
+            document.getElementById('upi-section').style.display = 'none';
+            document.getElementById('cash-section').style.display = 'block';
+        }
+    }
+
+    function confirmOrder() {
+        // Here we could integrate WhatsApp
+        let text = "New Order:\n";
+        let total = 0;
+        cart.forEach(item => {
+            text += `${item.name} x ${item.qty} = ₹${item.price * item.qty}\n`;
+            total += item.price * item.qty;
+        });
+        text += `\nTotal: ₹${total}`;
+        
+        // Encode and open WhatsApp
+        const waLink = `https://wa.me/918855082930?text=${encodeURIComponent(text)}`;
+        window.open(waLink, '_blank');
+        
+        alert("Order sent to WhatsApp! Please complete payment.");
+        cart = [];
+        updateCartUI();
+        closePayment();
+    }
+    
+    function showToast(msg) {
+        // Simple toast or just log
+        console.log(msg);
+        // Optional: Create a temporary visual toast
+    }
+
+    // Close modals on clicking outside
+    window.onclick = function(event) {
+        if (event.target.className === 'modal-overlay') {
+            event.target.style.display = "none";
+        }
+    }
   </script>
  </body>
 </html>
