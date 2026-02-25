@@ -3053,17 +3053,21 @@
      <label style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px; display: block;">Phone Number <span style="color: var(--accent);">Optional</span></label>
      <input id="cust-phone" maxlength="10" placeholder="Phone Number" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="tel"/>
     </div>
+    <div style="margin: 20px 0;">
+     <label style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px; display: block;">Table Number</label>
+     <input id="cust-table" maxlength="2" placeholder="Enter your table number (1-9)" required="" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="number" min="1" max="9"/>
+     <p style="font-size: 0.8rem; color: #888; margin: 5px 0 0 0;">📌 Table number is inside your menu</p>
+    </div>
     <div class="payment-options">
-     <button class="pay-opt-btn active">
+     <!-- <button class="pay-opt-btn active">
       UPI / QR
-     </button>
+     </button> -->
     </div>
     <div class="qr-container" id="upi-section">
      <p style="font-size:0.9rem; color:#aaa;">
       Scan to Pay
      </p>
-     <!-- Static QR Image (Commented out - customer cannot share and pay) -->
-     <!-- <img alt="UPI QR" class="qr-img" id="static-qr" loading="lazy" src="assets2/payment_qr.webp" style="width: 100%; height: auto; max-width: 300px; object-fit: contain;"/> -->
+     <img alt="UPI QR" class="qr-img" id="static-qr" loading="lazy" src="assets2/payment_qr.webp" style="width: 100%; height: auto; max-width: 300px; object-fit: contain;"/>
      <p style="margin-top:10px; font-size:0.9rem; color: var(--accent);">
       UPI ID: paytm.s1m46nu@pty <br>
       Phone: 9967636702
@@ -3221,12 +3225,19 @@
     async function confirmOrder() {
         // Validate customer data
         const customerPhone = document.getElementById('cust-phone').value.trim();
+        const tableNumber = document.getElementById('cust-table').value.trim();
         const isDelivery = document.getElementById('delivery-toggle').checked;
         const deliveryAddress = document.getElementById('delivery-address').value.trim();
         
         // Check if cart is empty
         if (cart.length === 0) {
             alert('⚠️ Your cart is empty!');
+            return;
+        }
+        
+        // Validate table number (mandatory)
+        if (!tableNumber) {
+            alert('⚠️ Please enter your table number');
             return;
         }
         
@@ -3265,10 +3276,8 @@
             timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
         };
         
-        // Show loading message
-        alert('⏳ Please wait while we confirm your order...');
-        
-        // Save to Google Sheets
+        // Save to Google Sheets (Commented out - takes too long)
+        /*
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_kUm6ilp5a4ul8Xud_oZoRWD95-kzcYq2BRPWkUEOAbA9hrxC19CFI8zpaXfQTxcp/exec';
         
         try {
@@ -3283,11 +3292,12 @@
             console.error('❌ Failed to save to Google Sheets:', err);
             // Continue to WhatsApp even if save fails
         }
+        */
         
         // Build WhatsApp message with sanitized data
         let whatsappMessage = `*New Order from Baithack Menu*%0A%0A` +
-                              `*Name:* ${encodeURIComponent(sanitizedData.name)}%0A` +
-                              `*Phone:* ${encodeURIComponent(sanitizedData.phone)}%0A`;
+                              `*Phone:* ${encodeURIComponent(sanitizedData.phone)}%0A` +
+                              `*Table:* ${encodeURIComponent(tableNumber || 'Not provided')}%0A`;
         
         if (isDelivery) {
             whatsappMessage += `%0A🛵 *DELIVERY ORDER*%0A` +
@@ -3310,8 +3320,8 @@
         closePayment();
         
         // Clear customer inputs
-        document.getElementById('cust-name').value = '';
         document.getElementById('cust-phone').value = '';
+        document.getElementById('cust-table').value = '';
         document.getElementById('delivery-toggle').checked = false;
         document.getElementById('delivery-address').value = '';
         document.getElementById('delivery-address-section').style.display = 'none';
