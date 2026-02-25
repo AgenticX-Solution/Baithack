@@ -3050,8 +3050,8 @@
      </div>
     </div>
     <div style="margin: 20px 0;">
-     <input id="cust-name" placeholder="Your Name" required="" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="text"/>
-     <input id="cust-phone" maxlength="10" placeholder="Phone Number" required="" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="tel"/>
+     <label style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px; display: block;">Phone Number <span style="color: var(--accent);">Optional</span></label>
+     <input id="cust-phone" maxlength="10" placeholder="Phone Number" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="tel"/>
     </div>
     <div class="payment-options">
      <button class="pay-opt-btn active">
@@ -3062,15 +3062,15 @@
      <p style="font-size:0.9rem; color:#aaa;">
       Scan to Pay
      </p>
-     <!-- Static QR Image -->
-     <img alt="UPI QR" class="qr-img" id="static-qr" loading="lazy" src="assets2/payment_qr.webp" style="width: 100%; height: auto; max-width: 300px; object-fit: contain;"/>
+     <!-- Static QR Image (Commented out - customer cannot share and pay) -->
+     <!-- <img alt="UPI QR" class="qr-img" id="static-qr" loading="lazy" src="assets2/payment_qr.webp" style="width: 100%; height: auto; max-width: 300px; object-fit: contain;"/> -->
      <p style="margin-top:10px; font-size:0.9rem; color: var(--accent);">
       UPI ID: paytm.s1m46nu@pty <br>
       Phone: 9967636702
      </p>
     </div>
     <button class="checkout-btn" onclick="confirmOrder()">
-     Done
+     Order Now
     </button>
    </div>
   </div>
@@ -3092,20 +3092,6 @@
     // Validate name (letters and spaces only)
     function isValidName(name) {
         return /^[a-zA-Z\s]{2,50}$/.test(name.trim());
-    }
-    
-    // Rate limiting for form submission
-    let lastSubmitTime = 0;
-    const SUBMIT_COOLDOWN = 5000; // 5 seconds
-    
-    function canSubmit() {
-        const now = Date.now();
-        if (now - lastSubmitTime < SUBMIT_COOLDOWN) {
-            alert('⏳ Please wait a few seconds before submitting again.');
-            return false;
-        }
-        lastSubmitTime = now;
-        return true;
     }
     
     // ========== CART LOGIC ==========
@@ -3233,11 +3219,7 @@
     }
 
     async function confirmOrder() {
-        // Rate limiting check
-        if (!canSubmit()) return;
-        
         // Validate customer data
-        const customerName = document.getElementById('cust-name').value.trim();
         const customerPhone = document.getElementById('cust-phone').value.trim();
         const isDelivery = document.getElementById('delivery-toggle').checked;
         const deliveryAddress = document.getElementById('delivery-address').value.trim();
@@ -3248,20 +3230,8 @@
             return;
         }
         
-        // Validate required fields
-        if (!customerName || !customerPhone) {
-            alert('⚠️ Please enter your name and phone number');
-            return;
-        }
-        
-        // Validate name format
-        if (!isValidName(customerName)) {
-            alert('⚠️ Please enter a valid name (letters only, 2-50 characters)');
-            return;
-        }
-        
-        // Validate phone format
-        if (!isValidPhone(customerPhone)) {
+        // Validate phone format (optional field)
+        if (customerPhone && !isValidPhone(customerPhone)) {
             alert('⚠️ Please enter a valid 10-digit Indian phone number starting with 6-9');
             return;
         }
@@ -3288,13 +3258,15 @@
         
         // Sanitize all user inputs
         const sanitizedData = {
-            name: sanitizeHTML(customerName),
-            phone: sanitizeHTML(customerPhone),
+            phone: customerPhone ? sanitizeHTML(customerPhone) : 'Not provided',
             orderDetails: orderDetails.replace(/\n/g, ' | '),
             total: total,
             deliveryAddress: isDelivery ? sanitizeHTML(deliveryAddress) : 'Pickup',
             timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
         };
+        
+        // Show loading message
+        alert('⏳ Please wait while we confirm your order...');
         
         // Save to Google Sheets
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdvfcl0UMJv61yPOiXdFO9ia8nm7pbc_2O_HbjCoVBGto3KGnpyuvatJqkXxgadtUR/exec';
