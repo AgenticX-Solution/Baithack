@@ -3055,7 +3055,7 @@
     </div>
     <div style="margin: 20px 0;">
      <label style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px; display: block;">Table Number</label>
-     <input id="cust-table" maxlength="2" placeholder="Enter your table number (1-9)" required="" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="number" min="1" max="9"/>
+    <input id="cust-table" maxlength="2" placeholder="Enter your table number (1-12)" required="" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #333; color: #fff;" type="number" min="1" max="12" step="1" inputmode="numeric" oninput="enforceTableNumber(this)"/>
      <p style="font-size: 0.8rem; color: #888; margin: 5px 0 0 0;">📌 Table number is inside your menu</p>
     </div>
     <div class="payment-options">
@@ -3091,6 +3091,18 @@
     // Validate phone number (Indian format)
     function isValidPhone(phone) {
         return /^[6-9]\d{9}$/.test(phone);
+    }
+    
+    function enforceTableNumber(input) {
+        const digits = input.value.replace(/\D/g, '');
+        if (!digits) {
+            input.value = '';
+            return;
+        }
+        let value = parseInt(digits, 10);
+        if (value < 1) value = 1;
+        if (value > 12) value = 12;
+        input.value = value.toString();
     }
     
     // Validate name (letters and spaces only)
@@ -3235,9 +3247,10 @@
             return;
         }
         
-        // Validate table number (mandatory)
-        if (!tableNumber) {
-            alert('⚠️ Please enter your table number');
+        // Validate table number (mandatory, 1-12)
+        const tableValue = parseInt(tableNumber, 10);
+        if (!tableNumber || Number.isNaN(tableValue) || tableValue < 1 || tableValue > 12) {
+            alert('⚠️ Please enter a valid table number (1-12)');
             return;
         }
         
