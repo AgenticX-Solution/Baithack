@@ -3471,7 +3471,7 @@
             addressSection.style.display = isDelivery ? 'block' : 'none';
         }
 
-        async function confirmOrder() {
+        function confirmOrder() {
             // Validate customer data
             const customerPhone = document.getElementById('cust-phone').value.trim();
             const tableNumber = document.getElementById('cust-table').value.trim();
@@ -3519,30 +3519,13 @@
 
             // Sanitize all user inputs
             const sanitizedData = {
+                timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
                 phone: customerPhone ? sanitizeHTML(customerPhone) : 'Not provided',
+                table: sanitizeHTML(tableNumber),
                 orderDetails: orderDetails.replace(/\n/g, ' | '),
                 total: total,
-                deliveryAddress: isDelivery ? sanitizeHTML(deliveryAddress) : 'Pickup',
-                timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+                deliveryAddress: isDelivery ? sanitizeHTML(deliveryAddress) : 'Pickup'
             };
-
-            // Save to Google Sheets (Commented out - takes too long)
-            /*
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_kUm6ilp5a4ul8Xud_oZoRWD95-kzcYq2BRPWkUEOAbA9hrxC19CFI8zpaXfQTxcp/exec';
-            
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(sanitizedData)
-                });
-                console.log('✅ Order saved to Google Sheets');
-            } catch (err) {
-                console.error('❌ Failed to save to Google Sheets:', err);
-                // Continue to WhatsApp even if save fails
-            }
-            */
 
             // Build WhatsApp message with sanitized data
             let whatsappMessage = `*New Order from Baithack Menu*%0A%0A` +
@@ -3561,8 +3544,21 @@
                 whatsappMessage += `%0A*Delivery:* FREE (Within 1km)`;
             }
 
-            // Redirect to WhatsApp
-            window.location.href = `https://wa.me/918855082930?text=${whatsappMessage}`;
+            // Redirect to WhatsApp in NEW TAB (page stays open to save data)
+            window.open(`https://wa.me/918855082930?text=${whatsappMessage}`, '_blank');
+            
+            // Save to Google Sheets in BACKGROUND (non-blocking)
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8MNGhapuPbY9ZRu6AubuR4dlgSC_mrlVEdVv0ZkgeqkiKC_yb2zbVuDTAZM1VQjz7/exec';
+            
+            // Send data using fetch (more reliable for Apps Script)
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(sanitizedData),
+                keepalive: true
+            })
+            .then(response => response.json())
+            .then(result => console.log('✅ Order saved:', result))
+            .catch(err => console.error('❌ Save failed:', err));
 
             // Clear cart and close modal
             cart = [];
